@@ -24,6 +24,9 @@
         <!-- <button class="upload-btn p-1 pr-5 pl-5" type="submit">
           Upload <img src="@/assets/images/plus-icon.png" alt="upload-btn" />
         </button> -->
+        <div v-show="isLoading" class="loading-container">
+        <div class="loading-icon"></div>
+      </div>
       </form>
     </div>
   </section>
@@ -41,11 +44,13 @@ export default {
       errorMessage: "",
       successMessage: "",
       resumeId: null,
+      isLoading: false, // New data property to  control loading animation
     };
   },
   methods: {
     async uploadResume(event) {
       console.log("Loading...");
+      this.isLoading = true // Show loading animation before fetch
       try {
         const formData = new FormData();
         formData.append("resume", event.target.files[0]);
@@ -70,6 +75,8 @@ export default {
       } catch (error) {
         this.errorMessage = error.message || "Failed to upload resume.";
         this.successMessage = "";
+      }finally{
+        this.isLoading = false // Hide loading animation after fetch completes
       }
       console.log(this.resumeId);
     },
@@ -101,6 +108,37 @@ export default {
 input {
   cursor: pointer;
 }
+.loading-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* Optional: Semi-transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-icon {
+  /* Add styles for your chosen loading animation here */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  border-top-color: transparent; /* Simulates spinning animation */
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 768px) {
   .wrapper {
     padding: 20px !important;
