@@ -38,7 +38,9 @@
             Download
           </button>
         </div>
-        <a :href="previewResponse" target="blank">{{ previewResponse }}</a>
+        <div class="linkDiv center" v-if="previewResponse">
+          <a :href="previewResponse" target="blank">Preview Link </a>
+        </div>
         <div v-show="isLoading" class="loading-container">
           <div class="loading-icon"></div>
         </div>
@@ -148,6 +150,7 @@ export default {
 <style scoped>
 * {
   -webkit-user-drag: none;
+  overflow-x: none !important;
 }
 .wrapper {
   height: 100vh;
@@ -194,6 +197,11 @@ input {
   border: 5px solid #047857;
   border-top-color: transparent; /* Simulates spinning animation */
   animation: spin 1s linear infinite;
+}
+.linkDiv{
+  width: 100% !important;
+  flex-wrap: wrap;
+
 }
 
 @keyframes spin {
