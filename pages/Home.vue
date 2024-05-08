@@ -3,7 +3,7 @@
     <h1 class="mb-4">Resume Enhancer ✨</h1>
     <p class="mb-2">Upload Resume</p>
     <div class="upload center">
-      <form class="center p-1">
+      <form class="center p-1" @submit.prevent>
         <img src="@/assets/images/upload-Icon.png" alt="upload" class="mb-4" />
 
         <p ref="element">
@@ -21,12 +21,17 @@
           required
         />
 
-        <!-- <button class="upload-btn p-1 pr-5 pl-5" type="submit">
-          Upload <img src="@/assets/images/plus-icon.png" alt="upload-btn" />
-        </button> -->
+        <button
+          class="upload-btn p-1 pr-5 pl-5 mb-2"
+          type="submit"
+          @click="previewResume"
+        >
+          Preview
+        </button>
+        <a :href="previewResponse" target="blank">{{ previewResponse }}</a>
         <div v-show="isLoading" class="loading-container">
-        <div class="loading-icon"></div>
-      </div>
+          <div class="loading-icon"></div>
+        </div>
       </form>
     </div>
   </section>
@@ -44,13 +49,14 @@ export default {
       errorMessage: "",
       successMessage: "",
       resumeId: null,
+      previewResponse: null,
       isLoading: false, // New data property to  control loading animation
     };
   },
   methods: {
     async uploadResume(event) {
       console.log("Loading...");
-      this.isLoading = true // Show loading animation before fetch
+      this.isLoading = true; // Show loading animation before fetch
       try {
         const formData = new FormData();
         formData.append("resume", event.target.files[0]);
@@ -75,10 +81,30 @@ export default {
       } catch (error) {
         this.errorMessage = error.message || "Failed to upload resume.";
         this.successMessage = "";
-      }finally{
-        this.isLoading = false // Hide loading animation after fetch completes
+      } finally {
+        this.isLoading = false; // Hide loading animation after fetch completes
       }
       console.log(this.resumeId);
+    },
+    //PREVIEW RESUME
+    async previewResume() {
+      console.log("Resume Preview ongoing...");
+      try {
+        const response = await axios.get(
+          `https://resume-enhancer-api.onrender.com/api/v1/resumes/${this.resumeId}`
+        );
+        if (response.status === 200) {
+          // Handle successful response, e.g., update UI with enhanced resume details
+          console.log("Preview Successful");
+          console.log(response.data.data.resume);
+          this.previewResponse = response.data.data.resume;
+        } else {
+          console.error("Failed to preview resume.");
+        }
+      } catch (error) {
+        this.errorMessage = error.message || "Failed to preview resume.";
+        this.successMessage = "";
+      }
     },
   },
 };
@@ -125,7 +151,7 @@ input {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 5px solid #fff;
+  border: 5px solid #047857;
   border-top-color: transparent; /* Simulates spinning animation */
   animation: spin 1s linear infinite;
 }
