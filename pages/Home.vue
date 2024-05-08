@@ -15,7 +15,7 @@
           type="file"
           ref="resumeFile"
           accept=".pdf"
-          class="mb-2"
+          class="mb-4"
           id="pdfInput"
           @change="uploadResume"
           required
@@ -33,7 +33,7 @@
           <button
             class="upload-btn p-1 pr-5 pl-5 mb-2"
             type="submit"
-            @click="downloadResume" 
+            @click="downloadResume"
           >
             Download
           </button>
@@ -117,32 +117,30 @@ export default {
       }
     },
 
-//DOWNLOAD RESUME
+    //DOWNLOAD RESUME
     async downloadResume() {
-        try {
-          const response = await axios.get(
-            `https://resume-enhancer-api.onrender.com/api/v1/resumes/download/${this.resumeId}`,
-            {
-              responseType: "blob",
-            }
-          );
-          if (response.status === 200) {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", "resume.pdf"); // You can set the file name here
-            document.body.appendChild(link);
-            link.click();
-          } else {
-            throw new Error("Failed to download resume.");
+      try {
+        const response = await axios.get(
+          `https://resume-enhancer-api.onrender.com/api/v1/resumes/download/${this.resumeId}`,
+          {
+            responseType: "blob",
           }
-        } catch (error) {
-          this.errorMessage = error.message || "Failed to download resume.";
-          this.successMessage = "";
+        );
+        if (response.status === 200) {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "resume.pdf"); // You can set the file name here
+          document.body.appendChild(link);
+          link.click();
+        } else {
+          throw new Error("Failed to download resume.");
         }
-      },
-
-
+      } catch (error) {
+        this.errorMessage = error.message || "Failed to download resume.";
+        this.successMessage = "";
+      }
+    },
   },
 };
 </script>
@@ -156,7 +154,7 @@ export default {
   width: 100vw;
   background-color: #fffefe;
 }
-.btns{
+.btns {
   display: flex;
   flex-direction: row;
   gap: 8%;
@@ -210,6 +208,10 @@ input {
 @media (max-width: 768px) {
   .wrapper {
     padding: 20px !important;
+  }
+  .btns {
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>
