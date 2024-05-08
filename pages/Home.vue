@@ -21,13 +21,23 @@
           required
         />
 
-        <button
-          class="upload-btn p-1 pr-5 pl-5 mb-2"
-          type="submit"
-          @click="previewResume"
-        >
-          Preview
-        </button>
+        <div class="mb-3 btns">
+          <button
+            class="upload-btn p-1 pr-5 pl-5 mb-2"
+            type="submit"
+            @click="previewResume"
+          >
+            Preview
+          </button>
+
+          <button
+            class="upload-btn p-1 pr-5 pl-5 mb-2"
+            type="submit"
+            @click="downloadResume" 
+          >
+            Download
+          </button>
+        </div>
         <a :href="previewResponse" target="blank">{{ previewResponse }}</a>
         <div v-show="isLoading" class="loading-container">
           <div class="loading-icon"></div>
@@ -106,6 +116,33 @@ export default {
         this.successMessage = "";
       }
     },
+
+//DOWNLOAD RESUME
+    async downloadResume() {
+        try {
+          const response = await axios.get(
+            `https://resume-enhancer-api.onrender.com/api/v1/resumes/download/${this.resumeId}`,
+            {
+              responseType: "blob",
+            }
+          );
+          if (response.status === 200) {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "resume.pdf"); // You can set the file name here
+            document.body.appendChild(link);
+            link.click();
+          } else {
+            throw new Error("Failed to download resume.");
+          }
+        } catch (error) {
+          this.errorMessage = error.message || "Failed to download resume.";
+          this.successMessage = "";
+        }
+      },
+
+
   },
 };
 </script>
@@ -118,6 +155,11 @@ export default {
   height: 100vh;
   width: 100vw;
   background-color: #fffefe;
+}
+.btns{
+  display: flex;
+  flex-direction: row;
+  gap: 8%;
 }
 .upload {
   border: 2px dashed #d1d5dc;
